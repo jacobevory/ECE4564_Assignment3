@@ -2,51 +2,67 @@
 
 from canvas import canvasAccessToken 
 import pymongo
-from pymongo import MongoClient
-from flask import Flask
-import requests
+from flask import Flask, request, Response
 from flask.ext.discoverer import Discoverer, advertise
+from functools import wraps
 
 clientIP = "127.0.0.1"
 clientPORT = 27017
-client = MongoClient(clientIP, clientPORT)
+client = pymongo.MongoClient(clientIP, clientPORT)
+client.drop_database("canvas")
+client.drop_database("auth")
 canvas = client.canvas
 auth = client.auth
+auth.pymongo.insert({"user": "user1", "password": "pass1"})
+auth.pymongo.insert({"user": "user2", "password": "pass2"})
+auth.pymongo.insert({"user": "user3", "password": "pass3"})
+
+def check_auth(username, password):
+    """This function is called to check if a username /
+    password combination is valid.
+    """
+    return auth.pymongo.find({"user": username, "password": password}).count()
+
+def authenticate():
+    """Sends a 401 response that enables basic auth"""
+    return Response(
+    'Could not verify your access level for that URL.\n'
+    'You have to login with proper credentials.', 401,
+    {'WWW-Authenticate': 'Basic realm="Login Required"'})
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    return decorated
 
 app = Flask(__name__)
-#disco = Discoverer(app)
-
 
 @advertise(private=True, colors=[])
-@app.route('/route1', methods=['GET'])
-def route1():
-    print('Route 1 accessed')
+@app.route('/LED')
+@requires_auth
+def LED_route():
+    print('LED route accessed')
     # do something
-    return "route1"
-
+    return "LED"
 
 @advertise(private=True, colors=[])
-@app.route('/route2', methods=['GET'])
-def route2():
-    print('Route 2 accessed')
+@app.route('/canvas')
+def canvas_route():
+    print('canvas route accessed')
     # do something
-    return "route2"
-
+    return "canvas"
 
 @advertise(private=True, colors=[])
-@app.route('/route3', methods=['POST'])
-def route3():
-    print('Route 3 accessed')
+@app.route('/hedgehogplz')
+@requires_auth
+def hedgehog_route():
+    print('hedgehog route accessed')
     # do something
-    return "route3"
-
-
-@advertise(private=True, colors=[])
-@app.route('/route4', methods=['POST'])
-def route4():
-    print('Route 4 accessed')
-    # do something
-    return "route4"
-
+    return "hedgehog"
 
 app.run(host='0.0.0.0', debug=True)
+
