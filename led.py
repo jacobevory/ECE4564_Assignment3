@@ -17,7 +17,7 @@ time.sleep(1)
 
 red = GPIO.PWM(12, 50)
 blue = GPIO.PWM(16, 50)
-yellow = GPIO.PWM(18, 50)
+green = GPIO.PWM(18, 50)
 
 app = Flask(__name__)
 
@@ -29,7 +29,7 @@ def LED():
     if status == 'off':
         red.stop()
         blue.stop()
-        yellow.stop()
+        green.stop()
         return "LED off"
     elif status != 'on':
         print('Error: Status incorrect.')
@@ -41,30 +41,34 @@ def LED():
     if color == 'red':
         red.start(100)
         blue.stop()
-        yellow.stop()
+        green.stop()
     elif color == 'blue':
         red.stop()
         blue.start(100)
-        yellow.stop()
+        green.stop()
     elif color == 'yellow':
-        red.stop()
+        red.start(100)
         blue.stop()
-        yellow.stop(100)
+        green.start(100)
+    elif color == 'magenta':
+        red.start(100)
+        blue.start(100)
+        green.stop()
     elif color == 'cyan':
         red.stop()
-        blue.start(75)
-        yellow.start(25)
+        blue.start(100)
+        green.start(100)
     elif color == 'green':
         red.stop()
-        blue.start(100)
-        yellow.start(100)
+        blue.stop()
+        green.start(100)
     elif color == 'white':
         red.start(100)
         blue.start(100)
-        yellow.start(100)
+        green.start(100)
     else:
         print('Error: Color incorrect.')
-        print('Correct options are: white, green, cyan, yellow, blue, red.')
+        print('Correct options are: magenta, white, green, cyan, yellow, blue, red.')
         return "LED not changed due to error."
 
     intensity = str(request.args.get('intensity'))
@@ -73,7 +77,7 @@ def LED():
     if inten >= 0 & inten <= 100:
         red.ChangeDutyCycle(inten)
         blue.ChangeDutyCycle(inten)
-        yellow.ChangeDutyCycle(inten)
+        green.ChangeDutyCycle(inten)
     else:
         print('Error: Intensity incorrect.')
         print('Correct options are >= 0 and <= 100.')
