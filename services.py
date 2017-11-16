@@ -2,7 +2,9 @@
 
 from canvas import canvasAccessToken 
 import pymongo
-from flask import Flask, requests
+from pymongo import MongoClient
+from flask import Flask
+import requests
 from flask.ext.discoverer import Discoverer, advertise
 
 clientIP = "127.0.0.1"
@@ -47,4 +49,4 @@ def route4():
     return "route4"
 
 
-app.run(host='localhost', debug=True)
+app.run(host='0.0.0.0', debug=True)
