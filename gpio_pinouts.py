@@ -20,6 +20,10 @@ GPIO.setup(18,GPIO.OUT) #yellow led
 #cyan = blue 75% & yellow 25%
 #white = all 3 on
 
+red = GPIO.PWM(12, 50)
+blue = GPIO.PWM(16, 50)
+yellow = GPIO.PWM(18, 50)
+
 '''
 Everything @ 100% 
 '''
