@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
-from canvas import canvasAccessToken 
+import warnings
+from flask.exthook import ExtDeprecationWarning
+warnings.simplefilter("ignore", ExtDeprecationWarning)
+
+from canvas import canvasAccessToken
 import pymongo
 from flask import Flask, request, Response
 from flask.ext.discoverer import Discoverer, advertise
