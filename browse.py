@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-""" Example of browsing for a service (in this case, HTTP) """
+""" Example of browsing for a service (in this case, _team18) """
 
 import logging
 import socket
