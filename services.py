@@ -101,13 +101,16 @@ def LED_route():
     print('LED route accessed')
     # do something
     if request.method == 'POST':
+        updateStatus = str(request.get_json().get('status')
+        updateIntensity = str(request.get_json().get('intensity')
+        updateColor = str(request.get_json().get('color')                           
         newStatus = {'status': updateStatus, 'intensity': updateIntensity, 'color': updateColor}        
         r = requests.post("http://" + LEDaddress + "/LED", json.dumps(newStatus))
         return r.json()
     elif request.method == 'GET':        
         r = requests.get("http://" + LEDaddress + "/LED") 
-        currentStatus = str(r.json().get('ledStatus').get('status'))
-        currentColor = str(r.json().get_json().get('ledStatus').get('color'))
+        #currentStatus = str(r.json().get('ledStatus').get('status'))
+        #currentColor = str(r.json().get_json().get('ledStatus').get('color'))
         return r.json()
 
 @advertise(private=True, colors=[], method=['GET', 'POST'])
