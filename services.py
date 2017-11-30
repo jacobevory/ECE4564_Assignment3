@@ -61,8 +61,10 @@ if __name__ == '__main__':
     zeroconf = Zeroconf()
     print("\nBrowsing services, press Ctrl-C to exit...\n")
 
-    #call this line to recieve advertisment 
+    #call this line to recieve advertisment     
     browser = ServiceBrowser(zeroconf, "_team18._tcp.local.", handlers=[on_service_state_change]) 
+    while browser is None:
+        browser = ServiceBrowser(zeroconf, "_team18._tcp.local.", handlers=[on_service_state_change]) 
     zeroconf.close()    
 
 def check_auth(username, password):
