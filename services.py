@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import requests
+import re
 import warnings
 from flask.exthook import ExtDeprecationWarning
 warnings.simplefilter("ignore", ExtDeprecationWarning)
