@@ -58,8 +58,8 @@ browser = ServiceBrowser(zeroconf, "_team18._tcp.local.", handlers=[on_service_s
 while listOfColors == []:
     sleep(0.1)
 
+browser.cancel()
 zeroconf.close()
-sleep(5)
 
 def check_auth(username, password):
     """This function is called to check if a username /
