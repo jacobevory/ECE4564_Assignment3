@@ -161,9 +161,9 @@ def canvas_route():
               rest = urls.split('"', 1)[0]
               finalurl = rest.replace("\u0026", "&")
               r = requests.get(finalurl, allow_redirects=True)
-              open("filename", 'wb').write(r.content)
+              open(filename, 'wb').write(r.content)
            i+=1
-        return send_file("filename")
+        return send_file(filename)
 
 @advertise(private=True, colors=[])
 @app.route('/hedgehogplz')
