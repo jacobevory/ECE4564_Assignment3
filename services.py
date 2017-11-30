@@ -117,7 +117,27 @@ def cat_route():
     print('cat route accessed')
     # do something
     return send_file('cat.jpg', mimetype='image/gif')
-    
+
+@advertise(private=True, colors=[])
+@app.route('/simonsays', methods=['POST'])
+@requires_auth
+def simon_route():
+    txt = request.form['simon says']
+    print(txt)
+    return "Simon says: " + txt
+
+@advertise(private=True, colors=[])
+@app.route('/liftoff', methods=['POST'])
+@requires_auth
+def liftoff_route():
+    txt = request.form['start']
+    i = int(txt)
+    while i > 0:
+        print(i)
+        i = i - 1
+        sleep(1)
+    return "We have lift off"
+
 @advertise(private=True, colors=[])
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
