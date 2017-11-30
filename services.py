@@ -137,7 +137,7 @@ def canvas_route():
         token=canvasAccessToken
         url = "https://vt.instructure.com/api/v1/groups/46402/files?access_token=" + token
         r=requests.get(url)
-        data = r.content
+        data = r.content.decode()
         datas = data.split('{')
 
         i=0; 
@@ -152,7 +152,7 @@ def canvas_route():
               r = requests.get(finalurl, allow_redirects=True)
               open(filename, 'wb').write(r.content)
            i+=1
-        #return "canvas"
+        return send_file(filename)
 
 @advertise(private=True, colors=[])
 @app.route('/hedgehogplz')
