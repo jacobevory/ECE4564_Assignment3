@@ -103,12 +103,12 @@ def LED_route():
     if request.method == 'POST':
         currentStatus = str(request.get_json().get('ledStatus').get('status'))
         currentColor = str(request.get_json().get('ledStatus').get('color'))
-        r = requests.get("http://" + LEDaddress + "/LED")            
+        r = requests.post("http://" + LEDaddress + "/LED", json.dumps(newStatus))
         return r.json()
     elif request.method == 'GET':
         newStatus = {'status': updateStatus, 'intensity': updateIntensity, 'color': updateColor}
-        r = requests.post("http://" + LEDaddress + "/LED", json.dumps(newStatus))
-        return json.dumps({'ledStatus': newStatus}), 201
+        r = requests.get("http://" + LEDaddress + "/LED")        
+        return r.json()
 
 @advertise(private=True, colors=[], method=['GET', 'POST'])
 @app.route('/canvas')
