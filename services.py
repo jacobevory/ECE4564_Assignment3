@@ -28,27 +28,38 @@ auth.pymongo.insert({"user": "user1", "password": "pass1"})
 auth.pymongo.insert({"user": "user2", "password": "pass2"})
 auth.pymongo.insert({"user": "user3", "password": "pass3"})
 
+listOfColors = []
+
 def on_service_state_change(zeroconf, service_type, name, state_change):
     print("Service %s of type %s state changed: %s" % (name, service_type, state_change))
-
     if state_change is ServiceStateChange.Added:
         info = zeroconf.get_service_info(service_type, name)
         if info:
-            zeroconf.close()
             print("  Address: %s:%d" % (socket.inet_ntoa(info.address), info.port))
             print("  Weight: %d, priority: %d" % (info.weight, info.priority))
-            print("  Server: %s" % (info.server,))
+            print("  Server: %s" % (info.server))
             if info.properties:
                 print("  Properties are:")
                 for key, value in info.properties.items():
-                    print("    %s: %s" % (key, value))
-                    newList = value.decode()
+                    newList = value.decode()                    
                     listOfColors.append(newList.split())
+                    print(" ", listOfColors)
             else:
                 print("  No properties")
         else:
             print("  No info")
         print('\n')
+
+
+zeroconf = Zeroconf()
+print("\nBrowsing services\n")
+browser = ServiceBrowser(zeroconf, "_team18._tcp.local.", handlers=[on_service_state_change]) 
+
+while listOfColors == []:
+    sleep(0.1)
+
+zeroconf.close()
+sleep(5)
 
 def check_auth(username, password):
     """This function is called to check if a username /
@@ -71,16 +82,6 @@ def requires_auth(f):
             return authenticate()
         return f(*args, **kwargs)
     return decorated
-
-listOfColors = []
-zeroconf = Zeroconf()
-print("\nBrowsing services\n")
-
-browser = ServiceBrowser(zeroconf, "_team18._tcp.local.", handlers=[on_service_state_change]) 
-while listOfColors == []:
-    sleep(0.1)
-   
-
 
 app = Flask(__name__)
 
