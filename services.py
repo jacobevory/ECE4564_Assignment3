@@ -112,6 +112,25 @@ def canvas_route():
     print('canvas route accessed')                                                                    
     # do something
     if request.method == 'POST':
+        access_token = '4511~qCyMvD0YiKX4IrjRoxuhJ7iytKJkKCXIYGM4nQdqFPgjimz8a0gdZtljZWuoq533'
+        filename = 'mary'
+
+        api_url='https://canvas.vt.edu/api/v1/groups/46402/files'
+        session = requests.Session()
+        session.headers = {'Authorization': 'Bearer %s' % access_token}
+        payload = {}
+        payload['name'] = filename
+        payload['parent_folder_path'] = '/'
+        uploadr = session.post(api_url, data=payload)
+        uploadr.raise_for_status()
+        uploadr = uploadr.json()
+        payload = list(uploadr['upload_params'].items())
+        with open(filename, 'rb') as f:
+             file_content=f.read()
+        payload.append((u'file', file_content))
+        uploadr = requests.post(uploadr['upload_url'], files=payload)
+        uploadr.raise_for_status()
+        uploadr = uploadr.json()
     if request.method == 'GET':
     return "canvas"
 
