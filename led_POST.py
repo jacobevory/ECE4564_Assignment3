@@ -23,8 +23,8 @@ server = zeroconf.Zeroconf()
 # Get local IP address
 local_ip = socket.gethostbyname(socket.gethostname())
 local_ip = socket.inet_aton(local_ip)
-svc1 = zeroconf.ServiceInfo('_team18._tcp.local.',
-                              'colors._team18._tcp.local.',
+svc1 = zeroconf.ServiceInfo('_team18._tcp.0.0.0.0.',
+                              'colors._team18._tcp.0.0.0.0.',
                               address = local_ip,
                               port = 2972,
                               weight = 0, priority=0,
@@ -97,7 +97,7 @@ def LEDGET():
         return "LED not changed due to error."
     return "LED changed"
 
-app.run(host='localhost', debug=True)
+app.run(host='0.0.0.0', debug=True)
 
 ################################################################
 @app.route('/LEDGET', methods=['GET'])
@@ -107,7 +107,7 @@ def LEDPOST():
     print('Sent POST request with status and color')
     return jsonify({'ledStatus': newStatus}), 201
 
-app.run(host='localhost', debug=True)
+app.run(host='0.0.0.0', debug=True)
 ################################################################
 
 GPIO.cleanup()
