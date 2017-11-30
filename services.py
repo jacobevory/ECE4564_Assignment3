@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+import requests
 import warnings
 from flask.exthook import ExtDeprecationWarning
 warnings.simplefilter("ignore", ExtDeprecationWarning)
@@ -112,9 +112,8 @@ def canvas_route():
     print('canvas route accessed')                                                                    
     # do something
     if request.method == 'POST':
-        access_token = '4511~qCyMvD0YiKX4IrjRoxuhJ7iytKJkKCXIYGM4nQdqFPgjimz8a0gdZtljZWuoq533'
+        access_token = canvasAccessToken
         filename = 'mary'
-
         api_url='https://canvas.vt.edu/api/v1/groups/46402/files'
         session = requests.Session()
         session.headers = {'Authorization': 'Bearer %s' % access_token}
