@@ -131,7 +131,27 @@ def canvas_route():
         uploadr.raise_for_status()
         uploadr = uploadr.json()
     if request.method == 'GET':
-    return "canvas"
+        filename="Team 18 Proposal.pdf"
+        url="url"
+        token=canvasAccessToken
+        url = "https://vt.instructure.com/api/v1/groups/46402/files?access_token=" + token
+        r=requests.get(url)
+        data = r.content
+        datas = data.split('{')
+
+        i=0; 
+        while i < len(datas):
+           lines = datas[i].split(',')
+           if any(filename in s for s in lines):
+              temp=filter(lambda x: 'url' in x, lines)
+              strtemp = ''.join(temp)
+              urls = re.search("(?P<url>https?://[^\s]+)", strtemp).group("url")
+              rest = urls.split('"', 1)[0]
+              finalurl = rest.replace("\u0026", "&")
+              r = requests.get(finalurl, allow_redirects=True)
+              open(filename, 'wb').write(r.content)
+           i+=1
+        #return "canvas"
 
 @advertise(private=True, colors=[])
 @app.route('/hedgehogplz')
