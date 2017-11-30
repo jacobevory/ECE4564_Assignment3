@@ -5,6 +5,7 @@ import RPi.GPIO as GPIO
 import time
 import zeroconf
 import socket
+import json
 
 #GPIO pins that can be used: 8, 10, 12, 16, 18, 22, 24, 26
 GPIO.setmode(GPIO.BOARD)
@@ -100,7 +101,7 @@ def LED():
     elif request.method == 'GET':
         newStatus = {'status': status, 'color': color}
         print('Sent POST request with status and color')
-        return jsonify({'ledStatus': newStatus}), 201
+        return json.dumps({'ledStatus': newStatus}), 201
 
 app.run(host='0.0.0.0', debug=True)
 
