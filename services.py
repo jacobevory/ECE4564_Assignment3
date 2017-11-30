@@ -43,8 +43,8 @@ def on_service_state_change(zeroconf, service_type, name, state_change):
                 print("  Properties are:")
                 for key, value in info.properties.items():
                     print("    %s: %s" % (key, value))
-                    newList = value.decode()
-                    listOfColors = newList.split(' ')
+                    #newList = value.decode()
+                    #listOfColors = newList.split(' ')
             else:
                 print("  No properties")
         else:
@@ -55,9 +55,9 @@ def on_service_state_change(zeroconf, service_type, name, state_change):
 zeroconf = Zeroconf()
 print("\nBrowsing services\n")
 
-#call this line to recieve advertisment 
+browser = ServiceBrowser(zeroconf, "_team18._tcp.local.", handlers=[on_service_state_change]) 
 while len(listOfColors) < 1:
-    browser = ServiceBrowser(zeroconf, "_team18._tcp.local.", handlers=[on_service_state_change]) 
+    sleep(0.1)
     
 zeroconf.close()
 
