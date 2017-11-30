@@ -18,20 +18,13 @@ red = GPIO.PWM(12, 50)
 blue = GPIO.PWM(16, 50)
 green = GPIO.PWM(18, 50)
  
-################################################################
 server = zeroconf.Zeroconf()
  
 # Get local IP address
 local_ip = socket.gethostbyname(socket.gethostname())
 local_ip = socket.inet_aton(local_ip)
-svc1 = zeroconf.ServiceInfo('_team18._tcp.local.',
-                              'colors._team18._tcp.local.',
-                              address = local_ip,
-                              port = 2972,
-                              weight = 0, priority=0,
-                              properties = {'colors': 'red blue green magenta cyan yellow white'})
+svc1 = zeroconf.ServiceInfo('_team18._tcp.local.', 'colors._team18._tcp.local.', address = local_ip, port = 2972, weight = 0, priority=0, properties = {'colors': 'red blue green magenta cyan yellow white'})
 server.register_service(svc1)
-################################################################
 
 app = Flask(__name__)
 
