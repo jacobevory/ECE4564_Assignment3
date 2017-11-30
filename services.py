@@ -63,10 +63,14 @@ def on_service_state_change(zeroconf, service_type, name, state_change):
 #       print('\n')
 
 zeroconf = Zeroconf()
-listExists = 'listOfColors' in locals() or 'listOfColors' in globals()
-if listExists == 0:
-    listOfColors = []
-    browser = ServiceBrowser(zeroconf, "_team18._tcp.local.", handlers=[on_service_state_change])
+kappa = 1
+while 1:
+    if kappa == 1:
+        print("running browser\n")
+        kappa = 0
+        browser = ServiceBrowser(zeroconf, "_team18._tcp.local.", handlers=[on_service_state_change])
+    if listOfColors != []:
+        break
 zeroconf.close()
 
 
