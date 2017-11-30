@@ -28,8 +28,6 @@ auth.pymongo.insert({"user": "user1", "password": "pass1"})
 auth.pymongo.insert({"user": "user2", "password": "pass2"})
 auth.pymongo.insert({"user": "user3", "password": "pass3"})
 
-listOfColors = []
-
 def on_service_state_change(zeroconf, service_type, name, state_change):
     print("Service %s of type %s state changed: %s" % (name, service_type, state_change))
 
@@ -50,16 +48,6 @@ def on_service_state_change(zeroconf, service_type, name, state_change):
         else:
             print("  No info")
         print('\n')
-
-
-zeroconf = Zeroconf()
-print("\nBrowsing services\n")
-
-browser = ServiceBrowser(zeroconf, "_team18._tcp.local.", handlers=[on_service_state_change]) 
-while listOfColors == []:
-    sleep(0.1)
-    
-zeroconf.close()
 
 def check_auth(username, password):
     """This function is called to check if a username /
@@ -83,7 +71,15 @@ def requires_auth(f):
         return f(*args, **kwargs)
     return decorated
 
+listOfColors = []
+zeroconf = Zeroconf()
+print("\nBrowsing services\n")
 
+browser = ServiceBrowser(zeroconf, "_team18._tcp.local.", handlers=[on_service_state_change]) 
+while listOfColors == []:
+    sleep(0.1)
+   
+zeroconf.close()
 
 app = Flask(__name__)
 
