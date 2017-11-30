@@ -43,8 +43,8 @@ def on_service_state_change(zeroconf, service_type, name, state_change):
                 print("  Properties are:")
                 for key, value in info.properties.items():
                     print("    %s: %s" % (key, value))
-                    #newList = value.decode()
-                    #listOfColors = newList.split(' ')
+                    newList = value.decode()
+                    listOfColors = newList.split(' ')
             else:
                 print("  No properties")
         else:
