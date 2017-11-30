@@ -57,7 +57,7 @@ print("\nBrowsing services\n")
 
 #call this line to recieve advertisment 
 while len(listOfColors) < 1:
-    browser = ServiceBrowser(zeroconf, "_team18._tcp.0.0.0.0.", handlers=[on_service_state_change]) 
+    browser = ServiceBrowser(zeroconf, "_team18._tcp.local.", handlers=[on_service_state_change]) 
     
 zeroconf.close()
 
