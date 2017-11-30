@@ -6,7 +6,7 @@ warnings.simplefilter("ignore", ExtDeprecationWarning)
 
 from canvas import canvasAccessToken
 import pymongo
-from flask import Flask, request, Response
+from flask import Flask, request, Response, send_file
 from flask.ext.discoverer import Discoverer, advertise
 from functools import wraps
 
@@ -66,7 +66,23 @@ def canvas_route():
 def hedgehog_route():
     print('hedgehog route accessed')
     # do something
-    return "hedgehog"
+    return send_file('hedgebaby.jpg', mimetype='image/gif')
+
+@advertise(private=True, colors=[])
+@app.route('/catplz')
+@requires_auth
+def cat_route():
+    print('cat route accessed')
+    # do something
+    return send_file('cat.jpg', mimetype='image/gif')
+	
+@advertise(private=True, colors=[])
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+@requires_auth
+def NULL_route(path):
+	print ('NULL route accessed')
+	return 'This is an invalid route, try harder next time.'
 
 app.run(host='0.0.0.0', debug=True)
 
