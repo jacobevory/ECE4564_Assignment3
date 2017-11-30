@@ -53,9 +53,9 @@ def on_service_state_change(zeroconf, service_type, name, state_change):
                     newList = value.decode()                    
                     listOfColors.append(newList.split())
 #                    print(" ", listOfColors)
-            else:
+#            else:
 #                print("  No properties")
-        else:
+#        else:
 #            print("  No info")
 #        print('\n')
 
@@ -63,7 +63,7 @@ zeroconf = Zeroconf()
 listExists = 'listOfColors' in locals() or 'listOfColors' in globals()
 if listExists == 0:
     listOfColors = []
-    browser = ServiceBrowser(zeroconf, "_team18._tcp.local.", handlers=[on_serv$
+    browser = ServiceBrowser(zeroconf, "_team18._tcp.local.", handlers=[on_service_state_change])
 zeroconf.close()
 
 
