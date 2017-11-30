@@ -111,7 +111,8 @@ def LED_route():
 def canvas_route():
     print('canvas route accessed')                                                                    
     # do something
-   
+    if request.method == 'POST':
+    if request.method == 'GET':
     return "canvas"
 
 @advertise(private=True, colors=[])
