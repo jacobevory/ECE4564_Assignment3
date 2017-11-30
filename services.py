@@ -39,25 +39,28 @@ updateStatus = ""
 currentColor = ""
 currentStatus = ""
 
+LEDaddress = ""
+
 def on_service_state_change(zeroconf, service_type, name, state_change):
     print("Service %s of type %s state changed: %s" % (name, service_type, state_change))
     if state_change is ServiceStateChange.Added:
         info = zeroconf.get_service_info(service_type, name)
         if info:
-#            print("  Address: %s:%d" % (socket.inet_ntoa(info.address), info.port))
-#            print("  Weight: %d, priority: %d" % (info.weight, info.priority))
-#            print("  Server: %s" % (info.server))
+            LEDaddress = info.address.decode() + ':' + info.port.decode()
+#           print("  Address: %s:%d" % (socket.inet_ntoa(info.address), info.port))
+#           print("  Weight: %d, priority: %d" % (info.weight, info.priority))
+#           print("  Server: %s" % (info.server))
             if info.properties:
 #                print("  Properties are:")
                 for key, value in info.properties.items():
                     newList = value.decode()                    
                     listOfColors.append(newList.split())
 #                    print(" ", listOfColors)
-#            else:
-#                print("  No properties")
-#        else:
-#            print("  No info")
-#        print('\n')
+#           else:
+#               print("  No properties")
+#       else:
+#           print("  No info")
+#       print('\n')
 
 zeroconf = Zeroconf()
 listExists = 'listOfColors' in locals() or 'listOfColors' in globals()
@@ -100,11 +103,11 @@ def LED_route():
     if request.method == 'POST':
         currentStatus = str(request.get_json().get('ledStatus').get('status'))
         currentColor = str(request.get_json().get('ledStatus').get('color'))
-        print('Sent POST request with status, intensity, and color')
-        return "LED_STATUS"
+        r = requests.get("http://" + LEDaddress + "/LED")            
+        return r.json()
     elif request.method == 'GET':
         newStatus = {'status': updateStatus, 'intensity': updateIntensity, 'color': updateColor}
-        print('Sent GET request with status, intensity, and color')
+        r = requests.post("http://" + LEDaddress + "/LED", json.dumps(newStatus))
         return json.dumps({'ledStatus': newStatus}), 201
 
 @advertise(private=True, colors=[], method=['GET', 'POST'])
