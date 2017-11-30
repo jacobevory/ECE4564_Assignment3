@@ -106,18 +106,19 @@ def LED_route():
         return r.json()
     elif request.method == 'GET':        
         r = requests.get("http://" + LEDaddress + "/LED") 
-        #currentStatus = str(r.json().get('ledStatus').get('status'))
-        #currentColor = str(r.json().get_json().get('ledStatus').get('color'))
+        currentStatus = str(r.json().get('ledStatus').get('status'))
+        currentColor = str(r.json().get_json().get('ledStatus').get('color'))
         return r.json()
 
 @advertise(private=True, colors=[], method=['GET', 'POST'])
-@app.route('/canvas')
+@app.route('/Canvas')
 def canvas_route():
-    print('canvas route accessed')                                                                    
+    print('canvas route accessed')   
+    status = str(request.args.get('file'))
     # do something
     if request.method == 'POST':
         access_token = canvasAccessToken
-        filename = 'mary'
+        filename = status
         api_url='https://canvas.vt.edu/api/v1/groups/46402/files'
         session = requests.Session()
         session.headers = {'Authorization': 'Bearer %s' % access_token}
@@ -135,7 +136,7 @@ def canvas_route():
         uploadr.raise_for_status()
         uploadr = uploadr.json()
     if request.method == 'GET':
-        filename="Team 18 Proposal.pdf"
+        filename=status
         url="url"
         token=canvasAccessToken
         url = "https://vt.instructure.com/api/v1/groups/46402/files?access_token=" + token
