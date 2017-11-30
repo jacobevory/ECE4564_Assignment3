@@ -14,6 +14,7 @@ import logging
 import socket
 import sys
 from time import sleep
+import json
 
 from zeroconf import ServiceBrowser, ServiceStateChange, Zeroconf
 
@@ -108,7 +109,7 @@ def LED_route():
     elif request.method == 'GET':
         newStatus = {'status': updateStatus, 'intensity': updateIntensity, 'color': updateColor}
         print('Sent GET request with status, intensity, and color')
-        return jsonify({'ledStatus': newStatus}), 201
+        return json.dumps({'ledStatus': newStatus}), 201
 
 @advertise(private=True, colors=[])
 @app.route('/canvas')
