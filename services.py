@@ -106,11 +106,12 @@ def LED_route():
         print('Sent GET request with status, intensity, and color')
         return json.dumps({'ledStatus': newStatus}), 201
 
-@advertise(private=True, colors=[])
+@advertise(private=True, colors=[], method=['GET', 'POST'])
 @app.route('/canvas')
 def canvas_route():
-    print('canvas route accessed')
+    print('canvas route accessed')                                                                    
     # do something
+   
     return "canvas"
 
 @advertise(private=True, colors=[])
