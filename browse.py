@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-""" Example of browsing for a service (in this case, _team18) """
-
 import logging
 import socket
 import sys
@@ -9,10 +7,10 @@ from time import sleep
 
 from zeroconf import ServiceBrowser, ServiceStateChange, Zeroconf
 
+listOfColors = []
 
 def on_service_state_change(zeroconf, service_type, name, state_change):
     print("Service %s of type %s state changed: %s" % (name, service_type, state_change))
-
     if state_change is ServiceStateChange.Added:
         info = zeroconf.get_service_info(service_type, name)
         if info:
@@ -22,7 +20,9 @@ def on_service_state_change(zeroconf, service_type, name, state_change):
             if info.properties:
                 print("  Properties are:")
                 for key, value in info.properties.items():
-                    print("    %s: %s" % (key, value))
+                    newList = value.decode()                    
+                    listOfColors.append(newList.split())
+                    print(" ", listOfColors)
             else:
                 print("  No properties")
         else:
@@ -30,20 +30,11 @@ def on_service_state_change(zeroconf, service_type, name, state_change):
         print('\n')
 
 
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
-    if len(sys.argv) > 1:
-        assert sys.argv[1:] == ['--debug']
-        logging.getLogger('zeroconf').setLevel(logging.DEBUG)
+zeroconf = Zeroconf()
+print("\nBrowsing services\n")
+browser = ServiceBrowser(zeroconf, "_team18._tcp.local.", handlers=[on_service_state_change]) 
 
-    zeroconf = Zeroconf()
-    print("\nBrowsing services, press Ctrl-C to exit...\n")
-    browser = ServiceBrowser(zeroconf, "_team18._tcp.local.", handlers=[on_service_state_change])
+while listOfColors == []:
+    sleep(0.1)
 
-    try:
-        while True:
-            sleep(0.1)
-    except KeyboardInterrupt:
-        pass
-    finally:
-        zeroconf.close()
+zeroconf.close()
