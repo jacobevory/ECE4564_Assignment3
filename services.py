@@ -106,8 +106,8 @@ def LED_route():
         return r.json()
     elif request.method == 'GET':        
         r = requests.get("http://" + LEDaddress + "/LED") 
-        currentStatus = str(r.json().get('ledStatus').get('status'))
-        currentColor = str(r.json().get_json().get('ledStatus').get('color'))
+        #currentStatus = str(r.json().get('ledStatus').get('status'))
+        #currentColor = str(r.json().get_json().get('ledStatus').get('color'))
         return r.json()
 
 @advertise(private=True, colors=[], method=['GET', 'POST'])
