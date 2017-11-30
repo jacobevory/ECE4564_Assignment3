@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-
+import requests
+import re
 import warnings
 from flask.exthook import ExtDeprecationWarning
 warnings.simplefilter("ignore", ExtDeprecationWarning)
@@ -38,31 +39,38 @@ updateStatus = ""
 currentColor = ""
 currentStatus = ""
 
+LEDaddress = ""
+
 def on_service_state_change(zeroconf, service_type, name, state_change):
     print("Service %s of type %s state changed: %s" % (name, service_type, state_change))
     if state_change is ServiceStateChange.Added:
         info = zeroconf.get_service_info(service_type, name)
         if info:
-#            print("  Address: %s:%d" % (socket.inet_ntoa(info.address), info.port))
-#            print("  Weight: %d, priority: %d" % (info.weight, info.priority))
-#            print("  Server: %s" % (info.server))
+            LEDaddress = socket.inet_ntoa(info.address) + ':' + str(info.port)
+            print("  Address: %s:%d" % (socket.inet_ntoa(info.address), info.port))
+#           print("  Weight: %d, priority: %d" % (info.weight, info.priority))
+            print("  Server: %s" % (info.server))
             if info.properties:
 #                print("  Properties are:")
                 for key, value in info.properties.items():
                     newList = value.decode()                    
                     listOfColors.append(newList.split())
 #                    print(" ", listOfColors)
-            else:
-#                print("  No properties")
-        else:
-#            print("  No info")
-#        print('\n')
+#           else:
+#               print("  No properties")
+#       else:
+#           print("  No info")
+#       print('\n')
 
 zeroconf = Zeroconf()
-listExists = 'listOfColors' in locals() or 'listOfColors' in globals()
-if listExists == 0:
-    listOfColors = []
-    browser = ServiceBrowser(zeroconf, "_team18._tcp.local.", handlers=[on_serv$
+kappa = 1
+while 1:
+    if kappa == 1:
+        print("running browser\n")
+        kappa = 0
+        browser = ServiceBrowser(zeroconf, "_team18._tcp.local.", handlers=[on_service_state_change])
+    if listOfColors != []:
+        break
 zeroconf.close()
 
 
@@ -97,22 +105,65 @@ def LED_route():
     print('LED route accessed')
     # do something
     if request.method == 'POST':
-        currentStatus = str(request.get_json().get('ledStatus').get('status'))
-        currentColor = str(request.get_json().get('ledStatus').get('color'))
-        print('Sent POST request with status, intensity, and color')
-        return "LED_STATUS"
-    elif request.method == 'GET':
-        newStatus = {'status': updateStatus, 'intensity': updateIntensity, 'color': updateColor}
-        print('Sent GET request with status, intensity, and color')
-        return json.dumps({'ledStatus': newStatus}), 201
+        updateStatus = str(request.get_json().get('status'))
+        updateIntensity = str(request.get_json().get('intensity'))
+        updateColor = str(request.get_json().get('color'))                           
+        newStatus = {'status': updateStatus, 'intensity': updateIntensity, 'color': updateColor}        
+        r = requests.post("http://" + LEDaddress + "/LED", json.dumps(newStatus))
+        return r.text
+    elif request.method == 'GET':        
+        r = requests.get("http://" + LEDaddress + "/LED") 
+        #currentStatus = str(r.json().get('ledStatus').get('status'))
+        #currentColor = str(r.json().get_json().get('ledStatus').get('color'))
+        return r.json()
 
 @advertise(private=True, colors=[], method=['GET', 'POST'])
-@app.route('/canvas')
+@app.route('/Canvas')
 def canvas_route():
-    print('canvas route accessed')                                                                    
+    print('canvas route accessed')   
+    status = str(request.args.get('file'))
     # do something
-   
-    return "canvas"
+    if request.method == 'POST':
+        access_token = canvasAccessToken
+        filename = status
+        api_url='https://canvas.vt.edu/api/v1/groups/46402/files'
+        session = requests.Session()
+        session.headers = {'Authorization': 'Bearer %s' % access_token}
+        payload = {}
+        payload['name'] = filename
+        payload['parent_folder_path'] = '/'
+        uploadr = session.post(api_url, data=payload)
+        uploadr.raise_for_status()
+        uploadr = uploadr.json()
+        payload = list(uploadr['upload_params'].items())
+        with open(filename, 'rb') as f:
+             file_content=f.read()
+        payload.append((u'file', file_content))
+        uploadr = requests.post(uploadr['upload_url'], files=payload)
+        uploadr.raise_for_status()
+        uploadr = uploadr.json()
+    if request.method == 'GET':
+        filename=status
+        url="url"
+        token=canvasAccessToken
+        url = "https://vt.instructure.com/api/v1/groups/46402/files?access_token=" + token
+        r=requests.get(url)
+        data = r.content.decode()
+        datas = data.split('{')
+
+        i=0; 
+        while i < len(datas):
+           lines = datas[i].split(',')
+           if any(filename in s for s in lines):
+              temp=filter(lambda x: 'url' in x, lines)
+              strtemp = ''.join(temp)
+              urls = re.search("(?P<url>https?://[^\s]+)", strtemp).group("url")
+              rest = urls.split('"', 1)[0]
+              finalurl = rest.replace("\u0026", "&")
+              r = requests.get(finalurl, allow_redirects=True)
+              open(filename, 'wb').write(r.content)
+           i+=1
+        return send_file(filename)
 
 @advertise(private=True, colors=[])
 @app.route('/hedgehogplz')

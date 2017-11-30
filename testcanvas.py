@@ -3,6 +3,8 @@ import requests
 import re
 
 
+
+
 filename="Team 18 Proposal.pdf"
 url="url"
 token="4511~qCyMvD0YiKX4IrjRoxuhJ7iytKJkKCXIYGM4nQdqFPgjimz8a0gdZtljZWuoq533"
@@ -21,7 +23,7 @@ while i < len(datas):
       rest = urls.split('"', 1)[0]
       finalurl = rest.replace("\u0026", "&")
       r = requests.get(finalurl, allow_redirects=True)
-      open(filename, 'wb').write(r.content)
+      open("filename", 'wb').write(r.content)
    i+=1
 
 
