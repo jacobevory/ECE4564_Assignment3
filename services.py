@@ -59,7 +59,9 @@ while listOfColors == []:
     sleep(0.1)
 
 browser.cancel()
+del browser
 zeroconf.close()
+del zeroconf
 
 def check_auth(username, password):
     """This function is called to check if a username /
