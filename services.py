@@ -122,9 +122,13 @@ def cat_route():
 @app.route('/simonsays', methods=['POST'])
 @requires_auth
 def simon_route():
-    txt = request.form['simon says']
+    txt = request.form['simonsays']
+    if not txt.startswith('Simon says'):
+        print("You did not say Simon says")
+        return "You did not say Simon says"
+    txt = txt.replace('Simon says', '')
     print(txt)
-    return "Simon says: " + txt
+    return txt
 
 @advertise(private=True, colors=[])
 @app.route('/liftoff', methods=['POST'])
