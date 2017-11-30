@@ -28,10 +28,10 @@ server.register_service(svc1)
 
 app = Flask(__name__)
 
-@app.route('/LED', method=['POST', 'GET'])
+@app.route('/LED', methods=['POST', 'GET'])
 
 def LED():
-    if request.method == 'POST':
+    if request.methods == 'POST':
         print('Changing LED')
         status = str(request.get_json().get('status'))
         print('Changing status to ' + status)
@@ -91,7 +91,7 @@ def LED():
             print('Correct options are >= 0 and <= 100.')
             return "LED not changed due to error."
         return "LED changed"
-    elif request.method == 'GET':
+    elif request.methods == 'GET':
         newStatus = {'status': status, 'color': color}
         print('Sent POST request with status and color')
         return json.dumps({'ledStatus': newStatus}), 201
