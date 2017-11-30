@@ -30,6 +30,13 @@ auth.pymongo.insert({"user": "user3", "password": "pass3"})
 
 listOfColors = []
 
+updateColor = ""
+updateIntensity = ""
+updateStatus = ""
+
+currentColor = ""
+currentStatus = ""
+
 def on_service_state_change(zeroconf, service_type, name, state_change):
     print("Service %s of type %s state changed: %s" % (name, service_type, state_change))
     if state_change is ServiceStateChange.Added:
@@ -87,13 +94,21 @@ def requires_auth(f):
 
 app = Flask(__name__)
 
-@advertise(private=True, colors=[])
+@advertise(private=True, colors=[], methods=['GET', 'POST'])
 @app.route('/LED')
 @requires_auth
 def LED_route():
     print('LED route accessed')
     # do something
-    return "LED"
+    if request.methods == 'POST':
+        currentStatus = str(request.get_json().get('ledStatus').get('status'))
+        currentColor = str(request.get_json().get('ledStatus').get('color'))
+        print('Sent POST request with status, intensity, and color')
+        return "LED_STATUS"
+    elif request.methods == 'GET':
+        newStatus = {'status': updateStatus, 'intensity': updateIntensity, 'color': updateColor}
+        print('Sent GET request with status, intensity, and color')
+        return jsonify({'ledStatus': newStatus}), 201
 
 @advertise(private=True, colors=[])
 @app.route('/canvas')
