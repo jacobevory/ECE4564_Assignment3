@@ -62,14 +62,7 @@ if __name__ == '__main__':
 
     #call this line to recieve advertisment 
     browser = ServiceBrowser(zeroconf, "_team18._tcp.local.", handlers=[on_service_state_change]) 
-
-    try:
-        while True:
-            sleep(0.1)
-    except KeyboardInterrupt:
-        pass
-    finally:
-        zeroconf.close()
+    zeroconf.close()    
 
 def check_auth(username, password):
     """This function is called to check if a username /
