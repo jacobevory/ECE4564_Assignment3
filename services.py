@@ -43,7 +43,7 @@ def on_service_state_change(zeroconf, service_type, name, state_change):
                 print("  Properties are:")
                 for key, value in info.properties.items():
                     print("    %s: %s" % (key, value))
-		    listOfColors = value.split(" ")
+            listOfColors = value.split(" ")
             else:
                 print("  No properties")
         else:
@@ -127,14 +127,13 @@ def cat_route():
     print('cat route accessed')
     # do something
     return send_file('cat.jpg', mimetype='image/gif')
-	
+    
 @advertise(private=True, colors=[])
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 @requires_auth
 def NULL_route(path):
-	print ('NULL route accessed')
-	return 'This is an invalid route, try harder next time.'
+    print ('NULL route accessed')
+    return 'This is an invalid route, try harder next time.'
 
 app.run(host='0.0.0.0', debug=True)
-
