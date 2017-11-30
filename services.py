@@ -52,20 +52,14 @@ def on_service_state_change(zeroconf, service_type, name, state_change):
         print('\n')
 
 
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
-    if len(sys.argv) > 1:
-        assert sys.argv[1:] == ['--debug']
-        logging.getLogger('zeroconf').setLevel(logging.DEBUG)
+zeroconf = Zeroconf()
+print("\nBrowsing services\n")
 
-    zeroconf = Zeroconf()
-    print("\nBrowsing services, press Ctrl-C to exit...\n")
-
-    #call this line to recieve advertisment     
+#call this line to recieve advertisment 
+while listOfColors.size() < 1:
     browser = ServiceBrowser(zeroconf, "_team18._tcp.local.", handlers=[on_service_state_change]) 
-    while browser is None:
-        browser = ServiceBrowser(zeroconf, "_team18._tcp.local.", handlers=[on_service_state_change]) 
-    zeroconf.close()    
+    
+zeroconf.close()
 
 def check_auth(username, password):
     """This function is called to check if a username /
