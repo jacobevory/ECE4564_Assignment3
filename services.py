@@ -10,6 +10,13 @@ from flask import Flask, request, Response, send_file
 from flask.ext.discoverer import Discoverer, advertise
 from functools import wraps
 
+import logging
+import socket
+import sys
+from time import sleep
+
+from zeroconf import ServiceBrowser, ServiceStateChange, Zeroconf
+
 clientIP = "127.0.0.1"
 clientPORT = 27017
 client = pymongo.MongoClient(clientIP, clientPORT)
@@ -20,6 +27,49 @@ auth = client.auth
 auth.pymongo.insert({"user": "user1", "password": "pass1"})
 auth.pymongo.insert({"user": "user2", "password": "pass2"})
 auth.pymongo.insert({"user": "user3", "password": "pass3"})
+
+listOfColors = []
+
+def on_service_state_change(zeroconf, service_type, name, state_change):
+    print("Service %s of type %s state changed: %s" % (name, service_type, state_change))
+
+    if state_change is ServiceStateChange.Added:
+        info = zeroconf.get_service_info(service_type, name)
+        if info:
+            print("  Address: %s:%d" % (socket.inet_ntoa(info.address), info.port))
+            print("  Weight: %d, priority: %d" % (info.weight, info.priority))
+            print("  Server: %s" % (info.server,))
+            if info.properties:
+                print("  Properties are:")
+                for key, value in info.properties.items():
+                    print("    %s: %s" % (key, value))
+		    listOfColors = value.split(" ")
+            else:
+                print("  No properties")
+        else:
+            print("  No info")
+        print('\n')
+
+
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
+    if len(sys.argv) > 1:
+        assert sys.argv[1:] == ['--debug']
+        logging.getLogger('zeroconf').setLevel(logging.DEBUG)
+
+    zeroconf = Zeroconf()
+    print("\nBrowsing services, press Ctrl-C to exit...\n")
+
+    #call this line to recieve advertisment 
+    browser = ServiceBrowser(zeroconf, "_team18._tcp.local.", handlers=[on_service_state_change]) 
+
+    try:
+        while True:
+            sleep(0.1)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        zeroconf.close()
 
 def check_auth(username, password):
     """This function is called to check if a username /
@@ -42,6 +92,8 @@ def requires_auth(f):
             return authenticate()
         return f(*args, **kwargs)
     return decorated
+
+
 
 app = Flask(__name__)
 
