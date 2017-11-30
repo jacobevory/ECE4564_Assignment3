@@ -94,18 +94,18 @@ def requires_auth(f):
 
 app = Flask(__name__)
 
-@advertise(private=True, colors=[], methods=['GET', 'POST'])
+@advertise(private=True, colors=[], method=['GET', 'POST'])
 @app.route('/LED')
 @requires_auth
 def LED_route():
     print('LED route accessed')
     # do something
-    if request.methods == 'POST':
+    if request.method == 'POST':
         currentStatus = str(request.get_json().get('ledStatus').get('status'))
         currentColor = str(request.get_json().get('ledStatus').get('color'))
         print('Sent POST request with status, intensity, and color')
         return "LED_STATUS"
-    elif request.methods == 'GET':
+    elif request.method == 'GET':
         newStatus = {'status': updateStatus, 'intensity': updateIntensity, 'color': updateColor}
         print('Sent GET request with status, intensity, and color')
         return jsonify({'ledStatus': newStatus}), 201
