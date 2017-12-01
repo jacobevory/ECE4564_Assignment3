@@ -98,8 +98,8 @@ def LED():
 
     elif request.method == 'GET':
         newStatus = {'status': status, 'color': color}
-        print('Sent POST request with status and color')
-        return json.dumps(newStatus), 201
+        print('Sent GET request with status and color')
+        return newStatus, 201
 
 
 app.run(host='0.0.0.0', debug=True)
