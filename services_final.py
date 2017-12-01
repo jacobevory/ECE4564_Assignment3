@@ -22,14 +22,14 @@ from zeroconf import ServiceBrowser, ServiceStateChange, Zeroconf
 
 
 listOfColors = []
-
+'''
 updateColor = ""
 updateIntensity = ""
 updateStatus = ""
 
 currentColor = ""
 currentStatus = ""
-
+'''
 LEDaddress = "172.29.18.24:5000"
 
 def on_service_state_change(zeroconf, service_type, name, state_change):
@@ -102,23 +102,19 @@ app = Flask(__name__)
 @app.route('/LED')
 #@requires_auth
 def LED_route():
-    print('LED route accessed')
-    # do something
-    if request.method == 'POST':
-        txt = request.form['user']
-        print("Recieved a POST request")
-        updateStatus = str(request.args.get('status'))
-        print(updateStatus)
-        updateIntensity = str(request.args.get('intensity'))
-        print(updateIntensity)
-        updateColor = str(request.args.get('color')) 
-        print(updateColor)
-        newStatus = {'status': updateStatus, 'intensity': updateIntensity, 'color': updateColor}  
-        print(newStatus)
-        r = requests.post("http://" + LEDaddress + "/LED", json.dumps(newStatus))
-        return r.text
-    elif request.method == 'GET':        
+    print('LED route accessed')    
+    if request.method == 'GET':        
         r = requests.get("http://" + LEDaddress + "/LED")       
+        return r.text
+    elif request.method == 'POST': 
+        print("Recieved a POST request") 
+        '''
+        updateStatus = str(request.args.get('status'))
+        updateIntensity = str(request.args.get('intensity'))
+        updateColor = str(request.args.get('color')) 
+        newStatus = {'status': updateStatus, 'intensity': updateIntensity, 'color': updateColor} 
+        '''
+        r = requests.post("http://" + LEDaddress + "/LED", json.dumps(request.args))
         return r.text
     
 @advertise(private=True, colors=[], method=['GET', 'POST'])
