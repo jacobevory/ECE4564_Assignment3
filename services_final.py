@@ -105,6 +105,7 @@ def LED_route():
     print('LED route accessed')
     # do something
     if request.method == 'POST':
+        txt = request.form['user']
         print("Recieved a POST request")
         updateStatus = str(request.args.get('status'))
         print(updateStatus)
