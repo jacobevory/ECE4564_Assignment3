@@ -19,8 +19,6 @@ import json
 
 from zeroconf import ServiceBrowser, ServiceStateChange, Zeroconf
 
-
-
 listOfColors = []
 
 LEDaddress = "172.29.18.24" 
@@ -33,19 +31,16 @@ def on_service_state_change(zeroconf, service_type, name, state_change):
         info = zeroconf.get_service_info(service_type, name)
         if info:            
             #LEDaddress.append(socket.inet_ntoa(info.address))
-            if count > 1 :
-                #LEDaddress.append("172.29.18.24")
-                print("  Address: %s:%d" % (socket.inet_ntoa(info.address), info.port))
-                print("  Weight: %d, priority: %d" % (info.weight, info.priority))
-                print("  Server: %s" % (info.server))
+            #LEDaddress.append("172.29.18.24")
+            print("  Address: %s:%d" % (socket.inet_ntoa(info.address), info.port))
+            print("  Weight: %d, priority: %d" % (info.weight, info.priority))
+            print("  Server: %s" % (info.server))
             if info.properties:
-                if count > 1 :
-                    print("  Properties are:")
+                print("  Properties are:")
                 for key, value in info.properties.items():
                     newList = value.decode()                    
                     listOfColors.append(newList.split())
-                    if count > 1 :
-                        print(" ", listOfColors)
+                    print(" ", listOfColors)
             else:
                 print("  No properties")
         else:
