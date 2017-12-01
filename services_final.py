@@ -19,16 +19,7 @@ import json
 
 from zeroconf import ServiceBrowser, ServiceStateChange, Zeroconf
 
-clientIP = "127.0.0.1"
-clientPORT = 27017
-client = pymongo.MongoClient(clientIP, clientPORT)
-client.drop_database("canvas")
-client.drop_database("auth")
-canvas = client.canvas
-auth = client.auth
-auth.pymongo.insert({"user": "user1", "password": "pass1"})
-auth.pymongo.insert({"user": "user2", "password": "pass2"})
-auth.pymongo.insert({"user": "user3", "password": "pass3"})
+
 
 listOfColors = []
 
@@ -71,7 +62,17 @@ while listOfColors == []:
     sleep(0.1)
     
 zeroconf.close()
-
+'''
+clientIP = "127.0.0.1"
+clientPORT = 27017
+client = pymongo.MongoClient(clientIP, clientPORT)
+client.drop_database("canvas")
+client.drop_database("auth")
+canvas = client.canvas
+auth = client.auth
+auth.pymongo.insert({"user": "user1", "password": "pass1"})
+auth.pymongo.insert({"user": "user2", "password": "pass2"})
+auth.pymongo.insert({"user": "user3", "password": "pass3"})
 
 def check_auth(username, password):
     """This function is called to check if a username /
@@ -94,12 +95,12 @@ def requires_auth(f):
             return authenticate()
         return f(*args, **kwargs)
     return decorated
-
+'''
 app = Flask(__name__)
 
 @advertise(private=True, colors=[], method=['GET', 'POST'])
 @app.route('/LED')
-@requires_auth
+#@requires_auth
 def LED_route():
     print('LED route accessed')
     # do something
@@ -115,7 +116,7 @@ def LED_route():
         #currentStatus = str(r.json().get('ledStatus').get('status'))
         #currentColor = str(r.json().get_json().get('ledStatus').get('color'))
         return r.json()
-
+'''
 @advertise(private=True, colors=[], method=['GET', 'POST'])
 @app.route('/Canvas')
 def canvas_route():
@@ -163,10 +164,10 @@ def canvas_route():
               open(filename, 'wb').write(r.content)
            i+=1
         return send_file(filename)
-
+'''
 @advertise(private=True, colors=[])
 @app.route('/hedgehogplz')
-@requires_auth
+#@requires_auth
 def hedgehog_route():
     print('hedgehog route accessed')
     # do something
@@ -174,7 +175,7 @@ def hedgehog_route():
 
 @advertise(private=True, colors=[])
 @app.route('/catplz')
-@requires_auth
+#@requires_auth
 def cat_route():
     print('cat route accessed')
     # do something
@@ -182,7 +183,7 @@ def cat_route():
 
 @advertise(private=True, colors=[])
 @app.route('/simonsays', methods=['POST'])
-@requires_auth
+#@requires_auth
 def simon_route():
     txt = request.form['simonsays']
     if not txt.startswith('Simon says'):
@@ -194,7 +195,7 @@ def simon_route():
 
 @advertise(private=True, colors=[])
 @app.route('/liftoff', methods=['POST'])
-@requires_auth
+#@requires_auth
 def liftoff_route():
     txt = request.form['start']
     i = int(txt)
@@ -207,7 +208,7 @@ def liftoff_route():
 @advertise(private=True, colors=[])
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
-@requires_auth
+#@requires_auth
 def NULL_route(path):
     print ('NULL route accessed')
     return 'This is an invalid route, try harder next time.'
