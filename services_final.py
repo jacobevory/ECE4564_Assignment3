@@ -23,8 +23,8 @@ from zeroconf import ServiceBrowser, ServiceStateChange, Zeroconf
 
 listOfColors = []
 
-#LEDaddress = "172.29.18.24" 
-LEDaddress = []
+LEDaddress = "172.29.18.24" 
+#LEDaddress = []
 
 count = 0;
 
@@ -33,8 +33,7 @@ def on_service_state_change(zeroconf, service_type, name, state_change):
     if state_change is ServiceStateChange.Added:
         info = zeroconf.get_service_info(service_type, name)
         if info:            
-            #LEDaddress = info.address.decode() + ':' + info.port.decode()
-            LEDaddress.append(socket.inet_ntoa(info.address))
+            #LEDaddress.append(socket.inet_ntoa(info.address))
             if count > 1 :
                 print("  Address: %s:%d" % (socket.inet_ntoa(info.address), info.port))
                 print("  Weight: %d, priority: %d" % (info.weight, info.priority))
