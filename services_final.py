@@ -23,8 +23,7 @@ from zeroconf import ServiceBrowser, ServiceStateChange, Zeroconf
 
 listOfColors = []
 
-#LEDaddress = "172.29.18.24" 
-LEDaddress = []
+LEDaddress = "172.29.18.24" 
 
 count = 0;
 
@@ -35,7 +34,7 @@ def on_service_state_change(zeroconf, service_type, name, state_change):
         if info:            
             #LEDaddress.append(socket.inet_ntoa(info.address))
             if count > 1 :
-                LEDaddress.append("172.29.18.24")
+                #LEDaddress.append("172.29.18.24")
                 print("  Address: %s:%d" % (socket.inet_ntoa(info.address), info.port))
                 print("  Weight: %d, priority: %d" % (info.weight, info.priority))
                 print("  Server: %s" % (info.server))
@@ -105,7 +104,7 @@ app = Flask(__name__)
 def LED_route():
     print('LED route accessed')    
     if request.method == 'GET':        
-        r = requests.get("http://" + LEDaddress[0] + ":5000/LED")       
+        r = requests.get("http://" + LEDaddress + ":5000/LED")       
         return r.text
     elif request.method == 'POST': 
         print("Recieved a POST request")         
@@ -114,7 +113,7 @@ def LED_route():
         updateColor = str(request.args.get('color')) 
         newStatus = {'status': updateStatus, 'intensity': updateIntensity, 'color': updateColor}
         print(newStatus)
-        r = requests.post("http://" + LEDaddress[0] + ":5000/LED" + "?" + "status=" + updateStatus + "&" + "color=" + updateColor + "&" +"intensity=" + updateIntensity)
+        r = requests.post("http://" + LEDaddress + ":5000/LED" + "?" + "status=" + updateStatus + "&" + "color=" + updateColor + "&" +"intensity=" + updateIntensity)
         return r.text
     
 @advertise(private=True, colors=[], methods=['GET', 'POST'])
