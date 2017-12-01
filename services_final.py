@@ -24,7 +24,7 @@ from zeroconf import ServiceBrowser, ServiceStateChange, Zeroconf
 listOfColors = []
 
 #LEDaddress = "172.29.18.24" 
-LEDaddress = []
+LEDaddress = ""
 
 count = 0;
 
