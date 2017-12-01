@@ -19,6 +19,50 @@ import json
 
 from zeroconf import ServiceBrowser, ServiceStateChange, Zeroconf
 
+
+
+listOfColors = []
+
+LEDaddress = "172.29.18.24" 
+
+count = 0;
+
+def on_service_state_change(zeroconf, service_type, name, state_change):
+    print("Service %s of type %s state changed: %s" % (name, service_type, state_change))
+    if state_change is ServiceStateChange.Added:
+        info = zeroconf.get_service_info(service_type, name)
+        if info:            
+            #LEDaddress.append(socket.inet_ntoa(info.address))
+            if count > 1 :
+                #LEDaddress.append("172.29.18.24")
+                print("  Address: %s:%d" % (socket.inet_ntoa(info.address), info.port))
+                print("  Weight: %d, priority: %d" % (info.weight, info.priority))
+                print("  Server: %s" % (info.server))
+            if info.properties:
+                if count > 1 :
+                    print("  Properties are:")
+                for key, value in info.properties.items():
+                    newList = value.decode()                    
+                    listOfColors.append(newList.split())
+                    if count > 1 :
+                        print(" ", listOfColors)
+            else:
+                print("  No properties")
+        else:
+            print("  No info")
+        print('\n')
+        
+print("\nBrowsing services\n")
+
+while count < 2 :
+    zeroconf = Zeroconf()
+    browser = ServiceBrowser(zeroconf, "_team18._tcp.local.", handlers=[on_service_state_change])    
+    while listOfColors == []:
+        sleep(0.1)    
+    count = count + 1
+    zeroconf.close()
+    
+
 clientIP = "127.0.0.1"
 clientPORT = 27017
 client = pymongo.MongoClient(clientIP, clientPORT)
@@ -29,50 +73,6 @@ auth = client.auth
 auth.pymongo.insert({"user": "user1", "password": "pass1"})
 auth.pymongo.insert({"user": "user2", "password": "pass2"})
 auth.pymongo.insert({"user": "user3", "password": "pass3"})
-
-listOfColors = []
-
-updateColor = ""
-updateIntensity = ""
-updateStatus = ""
-
-currentColor = ""
-currentStatus = ""
-
-LEDaddress = ""
-
-def on_service_state_change(zeroconf, service_type, name, state_change):
-    print("Service %s of type %s state changed: %s" % (name, service_type, state_change))
-    if state_change is ServiceStateChange.Added:
-        info = zeroconf.get_service_info(service_type, name)
-        if info:
-            LEDaddress = socket.inet_ntoa(info.address) + ':' + str(info.port)
-            print("  Address: %s:%d" % (socket.inet_ntoa(info.address), info.port))
-#           print("  Weight: %d, priority: %d" % (info.weight, info.priority))
-            print("  Server: %s" % (info.server))
-            if info.properties:
-#                print("  Properties are:")
-                for key, value in info.properties.items():
-                    newList = value.decode()                    
-                    listOfColors.append(newList.split())
-#                    print(" ", listOfColors)
-#           else:
-#               print("  No properties")
-#       else:
-#           print("  No info")
-#       print('\n')
-
-zeroconf = Zeroconf()
-kappa = 1
-while 1:
-    if kappa == 1:
-        print("running browser\n")
-        kappa = 0
-        browser = ServiceBrowser(zeroconf, "_team18._tcp.local.", handlers=[on_service_state_change])
-    if listOfColors != []:
-        break
-zeroconf.close()
-
 
 def check_auth(username, password):
     """This function is called to check if a username /
@@ -98,31 +98,29 @@ def requires_auth(f):
 
 app = Flask(__name__)
 
-@advertise(private=True, colors=[], method=['GET', 'POST'])
-@app.route('/LED')
+@advertise(private=True, colors=[], methods=['GET', 'POST'])
+@app.route('/LED', methods=['GET', 'POST'])
 @requires_auth
 def LED_route():
-    print('LED route accessed')
-    # do something
-    if request.method == 'POST':
-        updateStatus = str(request.get_json().get('status'))
-        updateIntensity = str(request.get_json().get('intensity'))
-        updateColor = str(request.get_json().get('color'))                           
-        newStatus = {'status': updateStatus, 'intensity': updateIntensity, 'color': updateColor}        
-        r = requests.post("http://" + LEDaddress + "/LED", json.dumps(newStatus))
+    print('LED route accessed')    
+    if request.method == 'GET':        
+        r = requests.get("http://" + LEDaddress + ":5000/LED")       
         return r.text
-    elif request.method == 'GET':        
-        r = requests.get("http://" + LEDaddress + "/LED") 
-        #currentStatus = str(r.json().get('ledStatus').get('status'))
-        #currentColor = str(r.json().get_json().get('ledStatus').get('color'))
-        return r.json()
-
-@advertise(private=True, colors=[], method=['GET', 'POST'])
-@app.route('/Canvas')
+    elif request.method == 'POST': 
+        print("Recieved a POST request")         
+        updateStatus = str(request.args.get('status'))
+        updateIntensity = str(request.args.get('intensity'))
+        updateColor = str(request.args.get('color')) 
+        newStatus = {'status': updateStatus, 'intensity': updateIntensity, 'color': updateColor}
+        print(newStatus)
+        r = requests.post("http://" + LEDaddress + ":5000/LED" + "?" + "status=" + updateStatus + "&" + "color=" + updateColor + "&" +"intensity=" + updateIntensity)
+        return r.text
+    
+@advertise(private=True, colors=[], methods=['GET', 'POST'])
+@app.route('/Canvas', methods=['GET', 'POST'])
 def canvas_route():
     print('canvas route accessed')   
     status = str(request.args.get('file'))
-    # do something
     if request.method == 'POST':
         access_token = canvasAccessToken
         filename = status
@@ -142,6 +140,7 @@ def canvas_route():
         uploadr = requests.post(uploadr['upload_url'], files=payload)
         uploadr.raise_for_status()
         uploadr = uploadr.json()
+        return "file uploaded in canvas"
     if request.method == 'GET':
         filename=status
         url="url"
@@ -150,7 +149,6 @@ def canvas_route():
         r=requests.get(url)
         data = r.content.decode()
         datas = data.split('{')
-
         i=0; 
         while i < len(datas):
            lines = datas[i].split(',')
@@ -159,8 +157,8 @@ def canvas_route():
               strtemp = ''.join(temp)
               urls = re.search("(?P<url>https?://[^\s]+)", strtemp).group("url")
               rest = urls.split('"', 1)[0]
-              finalurl = rest.replace("\u0026", "&")
-              r = requests.get(finalurl, allow_redirects=True)
+              rest = rest.replace("\\u0026", "&")
+              r = requests.get(rest, allow_redirects=True)
               open(filename, 'wb').write(r.content)
            i+=1
         return send_file(filename)
