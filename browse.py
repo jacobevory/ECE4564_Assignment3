@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+""" Example of browsing for a service (in this case, HTTP) """
+
 import logging
 import socket
 import sys
@@ -37,4 +39,7 @@ browser = ServiceBrowser(zeroconf, "_team18._tcp.local.", handlers=[on_service_s
 while listOfColors == []:
     sleep(0.1)
 
+browser.cancel()
+del browser
 zeroconf.close()
+del zeroconf
