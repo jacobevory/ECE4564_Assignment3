@@ -99,7 +99,7 @@ def requires_auth(f):
 app = Flask(__name__)
 
 @advertise(private=True, colors=[], method=['GET', 'POST'])
-@app.route('/LED')
+@app.route('/LED', methods=['GET', 'POST'])
 #@requires_auth
 def LED_route():
     print('LED route accessed')    
@@ -108,17 +108,17 @@ def LED_route():
         return r.text
     elif request.method == 'POST': 
         print("Recieved a POST request") 
-        '''
+        
         updateStatus = str(request.args.get('status'))
         updateIntensity = str(request.args.get('intensity'))
         updateColor = str(request.args.get('color')) 
         newStatus = {'status': updateStatus, 'intensity': updateIntensity, 'color': updateColor} 
-        '''
-        r = requests.post("http://" + LEDaddress + "/LED", json.dumps(request.args))
+        
+        r = requests.post("http://" + LEDaddress + "/LED", json.dumps(newStatus))
         return r.text
     
 @advertise(private=True, colors=[], method=['GET', 'POST'])
-@app.route('/Canvas')
+@app.route('/Canvas', methods=['GET', 'POST'])
 def canvas_route():
     print('canvas route accessed')   
     status = str(request.args.get('file'))
