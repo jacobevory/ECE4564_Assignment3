@@ -11,3 +11,4 @@ Zeroconf, GPIO, and communication between the led pi and services pi
 
 Mary Hailu 
 Canvas API 
+Implement the Canvas API GET and POST request. 
