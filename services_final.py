@@ -105,11 +105,11 @@ def LED_route():
     print('LED route accessed')
     # do something
     if request.method == 'POST':
-        updateStatus = str(request.get_json().get('status'))
+        updateStatus = str(request.args.get('status'))
         print(updateStatus)
-        updateIntensity = str(request.get_json().get('intensity'))
+        updateIntensity = str(request.args.get('intensity'))
         print(updateIntensity)
-        updateColor = str(request.get_json().get('color')) 
+        updateColor = str(request.args.get('color')) 
         print(updateColor)
         newStatus = {'status': updateStatus, 'intensity': updateIntensity, 'color': updateColor}  
         print(newStatus)
