@@ -21,7 +21,7 @@ from zeroconf import ServiceBrowser, ServiceStateChange, Zeroconf
 
 listOfColors = []
 
-LEDaddress = "172.29.18.24" 
+LEDaddress = "172.29.18.24:5000" 
 
 count = 0;
 
@@ -99,7 +99,7 @@ app = Flask(__name__)
 def LED_route():
     print('LED route accessed')    
     if request.method == 'GET':        
-        r = requests.get("http://" + LEDaddress + ":5000/LED")       
+        r = requests.get("http://" + LEDaddress + "/LED")       
         return r.text
     elif request.method == 'POST': 
         print("Recieved a POST request")         
@@ -108,7 +108,7 @@ def LED_route():
         updateColor = str(request.args.get('color')) 
         newStatus = {'status': updateStatus, 'intensity': updateIntensity, 'color': updateColor}
         print(newStatus)
-        r = requests.post("http://" + LEDaddress + ":5000/LED" + "?" + "status=" + updateStatus + "&" + "color=" + updateColor + "&" +"intensity=" + updateIntensity)
+        r = requests.post("http://" + LEDaddress + "/LED" + "?" + "status=" + updateStatus + "&" + "color=" + updateColor + "&" +"intensity=" + updateIntensity)
         return r.text
     
 @advertise(private=True, colors=[], methods=['GET', 'POST'])
