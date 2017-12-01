@@ -22,15 +22,9 @@ from zeroconf import ServiceBrowser, ServiceStateChange, Zeroconf
 
 
 listOfColors = []
-'''
-updateColor = ""
-updateIntensity = ""
-updateStatus = ""
 
-currentColor = ""
-currentStatus = ""
-'''
-LEDaddress = "172.29.18.24:5000"
+#LEDaddress = "172.29.18.24" 
+LEDaddress = []
 
 def on_service_state_change(zeroconf, service_type, name, state_change):
     print("Service %s of type %s state changed: %s" % (name, service_type, state_change))
@@ -38,6 +32,7 @@ def on_service_state_change(zeroconf, service_type, name, state_change):
         info = zeroconf.get_service_info(service_type, name)
         if info:
             #LEDaddress = info.address.decode() + ':' + info.port.decode()
+            LEDaddress.append(socket.inet_ntoa(info.address))
             print("  Address: %s:%d" % (socket.inet_ntoa(info.address), info.port))
             print("  Weight: %d, priority: %d" % (info.weight, info.priority))
             print("  Server: %s" % (info.server))
@@ -62,7 +57,7 @@ while listOfColors == []:
     sleep(0.1)
     
 zeroconf.close()
-'''
+
 clientIP = "127.0.0.1"
 clientPORT = 27017
 client = pymongo.MongoClient(clientIP, clientPORT)
@@ -95,16 +90,16 @@ def requires_auth(f):
             return authenticate()
         return f(*args, **kwargs)
     return decorated
-'''
+
 app = Flask(__name__)
 
 @advertise(private=True, colors=[], methods=['GET', 'POST'])
 @app.route('/LED', methods=['GET', 'POST'])
-#@requires_auth
+@requires_auth
 def LED_route():
     print('LED route accessed')    
     if request.method == 'GET':        
-        r = requests.get("http://" + LEDaddress + "/LED")       
+        r = requests.get("http://" + LEDaddress + ":5000/LED")       
         return r.text
     elif request.method == 'POST': 
         print("Recieved a POST request")         
@@ -113,7 +108,7 @@ def LED_route():
         updateColor = str(request.args.get('color')) 
         newStatus = {'status': updateStatus, 'intensity': updateIntensity, 'color': updateColor}
         print(newStatus)
-        r = requests.post("http://" + LEDaddress + "/LED" + "?" + "status=" + updateStatus + "&" + "color=" + updateColor + "&" +"intensity=" + updateIntensity)
+        r = requests.post("http://" + LEDaddress + ":5000/LED" + "?" + "status=" + updateStatus + "&" + "color=" + updateColor + "&" +"intensity=" + updateIntensity)
         return r.text
     
 @advertise(private=True, colors=[], methods=['GET', 'POST'])
@@ -165,7 +160,7 @@ def canvas_route():
 
 @advertise(private=True, colors=[])
 @app.route('/hedgehogplz')
-#@requires_auth
+@requires_auth
 def hedgehog_route():
     print('hedgehog route accessed')
     # do something
@@ -173,7 +168,7 @@ def hedgehog_route():
 
 @advertise(private=True, colors=[])
 @app.route('/catplz')
-#@requires_auth
+@requires_auth
 def cat_route():
     print('cat route accessed')
     # do something
@@ -181,7 +176,7 @@ def cat_route():
 
 @advertise(private=True, colors=[])
 @app.route('/simonsays', methods=['POST'])
-#@requires_auth
+@requires_auth
 def simon_route():
     txt = request.form['simonsays']
     if not txt.startswith('Simon says'):
@@ -193,7 +188,7 @@ def simon_route():
 
 @advertise(private=True, colors=[])
 @app.route('/liftoff', methods=['POST'])
-#@requires_auth
+@requires_auth
 def liftoff_route():
     txt = request.form['start']
     i = int(txt)
@@ -206,7 +201,7 @@ def liftoff_route():
 @advertise(private=True, colors=[])
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
-#@requires_auth
+@requires_auth
 def NULL_route(path):
     print ('NULL route accessed')
     return 'This is an invalid route, try harder next time.'
