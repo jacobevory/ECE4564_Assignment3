@@ -121,13 +121,14 @@ def LED_route():
         #currentStatus = str(r.json().get('ledStatus').get('status'))
         #currentColor = str(r.json().get_json().get('ledStatus').get('color'))        
         return r.text
-'''
+    
 @advertise(private=True, colors=[], method=['GET', 'POST'])
 @app.route('/Canvas')
 def canvas_route():
     print('canvas route accessed')   
     status = str(request.args.get('file'))
     # do something
+    '''
     if request.method == 'POST':
         access_token = canvasAccessToken
         filename = status
@@ -147,6 +148,7 @@ def canvas_route():
         uploadr = requests.post(uploadr['upload_url'], files=payload)
         uploadr.raise_for_status()
         uploadr = uploadr.json()
+   '''
     if request.method == 'GET':
         filename=status
         url="url"
@@ -155,7 +157,6 @@ def canvas_route():
         r=requests.get(url)
         data = r.content.decode()
         datas = data.split('{')
-
         i=0; 
         while i < len(datas):
            lines = datas[i].split(',')
@@ -164,12 +165,12 @@ def canvas_route():
               strtemp = ''.join(temp)
               urls = re.search("(?P<url>https?://[^\s]+)", strtemp).group("url")
               rest = urls.split('"', 1)[0]
-              finalurl = rest.replace("\u0026", "&")
-              r = requests.get(finalurl, allow_redirects=True)
+              rest = rest.replace("\\u0026", "&")
+              r = requests.get(rest, allow_redirects=True)
               open(filename, 'wb').write(r.content)
            i+=1
         return send_file(filename)
-'''
+
 @advertise(private=True, colors=[])
 @app.route('/hedgehogplz')
 #@requires_auth
