@@ -144,6 +144,7 @@ def canvas_route():
         uploadr = requests.post(uploadr['upload_url'], files=payload)
         uploadr.raise_for_status()
         uploadr = uploadr.json()
+        return "file uploaded in canvas"
     if request.method == 'GET':
         filename=status
         url="url"
