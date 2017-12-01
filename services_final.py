@@ -113,7 +113,7 @@ def LED_route():
         updateColor = str(request.args.get('color')) 
         newStatus = {'status': updateStatus, 'intensity': updateIntensity, 'color': updateColor}
         print(newStatus)
-        r = requests.post("http://" + LEDaddress + "/LED", json.dumps(newStatus))
+        r = requests.post("http://" + LEDaddress + "/LED", newStatus)
         return r.text
     
 @advertise(private=True, colors=[], methods=['GET', 'POST'])
