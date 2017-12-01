@@ -98,7 +98,7 @@ def requires_auth(f):
 '''
 app = Flask(__name__)
 
-@advertise(private=True, colors=[])
+@advertise(private=True, colors=[], methods=['GET', 'POST'])
 @app.route('/LED', methods=['GET', 'POST'])
 #@requires_auth
 def LED_route():
@@ -115,7 +115,7 @@ def LED_route():
         r = requests.post("http://" + LEDaddress + "/LED", json.dumps(newStatus))
         return r.text
     
-@advertise(private=True, colors=[])
+@advertise(private=True, colors=[], methods=['GET', 'POST'])
 @app.route('/Canvas', methods=['GET', 'POST'])
 def canvas_route():
     print('canvas route accessed')   
