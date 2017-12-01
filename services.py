@@ -97,7 +97,7 @@ def requires_auth(f):
 
 @advertise(private=True, colors=[], methods=['GET', 'POST'])
 @app.route('/LED', methods=['GET', 'POST'])
-@requires_auth
+#@requires_auth
 def LED_route():
     print('LED route accessed')    
     if request.method == 'GET':        
@@ -162,7 +162,7 @@ def canvas_route():
 
 @advertise(private=True, colors=[])
 @app.route('/hedgehogplz')
-@requires_auth
+#@requires_auth
 def hedgehog_route():
     print('hedgehog route accessed')
     # do something
@@ -170,7 +170,7 @@ def hedgehog_route():
 
 @advertise(private=True, colors=[])
 @app.route('/catplz')
-@requires_auth
+#@requires_auth
 def cat_route():
     print('cat route accessed')
     # do something
@@ -178,7 +178,7 @@ def cat_route():
 
 @advertise(private=True, colors=[])
 @app.route('/simonsays', methods=['POST'])
-@requires_auth
+#@requires_auth
 def simon_route():
     txt = request.form['simonsays']
     if not txt.startswith('Simon says'):
@@ -190,7 +190,7 @@ def simon_route():
 
 @advertise(private=True, colors=[])
 @app.route('/liftoff', methods=['POST'])
-@requires_auth
+#@requires_auth
 def liftoff_route():
     txt = request.form['start']
     i = int(txt)
@@ -203,7 +203,7 @@ def liftoff_route():
 @advertise(private=True, colors=[])
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
-@requires_auth
+#@requires_auth
 def NULL_route(path):
     print ('NULL route accessed')
     return 'This is an invalid route, try harder next time.'
