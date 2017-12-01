@@ -16,7 +16,7 @@ local_ip = socket.inet_aton(local_ip)
 svc1 = zeroconf.ServiceInfo('_team18._tcp.local.', 'colors._team18._tcp.local.', address = local_ip, port = 2972, weight = 0, priority=0, properties = {'colors': 'red blue green magenta cyan yellow white'})
 server.register_service(svc1)
 
-time.sleep(5)
+time.sleep(12)
 
 newserver = zeroconf.Zeroconf()
 newserver.register_service(svc1)
