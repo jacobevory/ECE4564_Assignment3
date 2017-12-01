@@ -19,6 +19,8 @@ import json
 
 from zeroconf import ServiceBrowser, ServiceStateChange, Zeroconf
 
+app = Flask(__name__)
+
 listOfColors = []
 
 LEDaddress = "172.29.18.24:5000" 
@@ -91,7 +93,7 @@ def requires_auth(f):
         return f(*args, **kwargs)
     return decorated
 
-app = Flask(__name__)
+
 
 @advertise(private=True, colors=[], methods=['GET', 'POST'])
 @app.route('/LED', methods=['GET', 'POST'])
