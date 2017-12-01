@@ -115,7 +115,7 @@ def LED_route():
         r = requests.get("http://" + LEDaddress + "/LED") 
         #currentStatus = str(r.json().get('ledStatus').get('status'))
         #currentColor = str(r.json().get_json().get('ledStatus').get('color'))        
-        return r
+        return r.text
 '''
 @advertise(private=True, colors=[], method=['GET', 'POST'])
 @app.route('/Canvas')
