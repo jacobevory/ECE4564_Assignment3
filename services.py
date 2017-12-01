@@ -59,7 +59,7 @@ while count < 2 :
     count = count + 1
     zeroconf.close()
     
-
+'''
 clientIP = "127.0.0.1"
 clientPORT = 27017
 client = pymongo.MongoClient(clientIP, clientPORT)
@@ -70,7 +70,7 @@ auth = client.auth
 auth.pymongo.insert({"user": "user1", "password": "pass1"})
 auth.pymongo.insert({"user": "user2", "password": "pass2"})
 auth.pymongo.insert({"user": "user3", "password": "pass3"})
-
+'''
 def check_auth(username, password):
     """This function is called to check if a username /
     password combination is valid.
