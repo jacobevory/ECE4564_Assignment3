@@ -127,8 +127,6 @@ def LED_route():
 def canvas_route():
     print('canvas route accessed')   
     status = str(request.args.get('file'))
-    # do something
-    '''
     if request.method == 'POST':
         access_token = canvasAccessToken
         filename = status
@@ -148,7 +146,6 @@ def canvas_route():
         uploadr = requests.post(uploadr['upload_url'], files=payload)
         uploadr.raise_for_status()
         uploadr = uploadr.json()
-   '''
     if request.method == 'GET':
         filename=status
         url="url"
