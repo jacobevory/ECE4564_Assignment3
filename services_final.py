@@ -108,9 +108,9 @@ def LED_route():
         return r.text
     elif request.method == 'POST': 
         print("Recieved a POST request")         
-        updateStatus = str(request.args.get('status'))
-        updateIntensity = str(request.args.get('intensity'))
-        updateColor = str(request.args.get('color')) 
+        updateStatus = str(request.get_json().get('status'))
+        updateIntensity = str(request.get_json().get('intensity'))
+        updateColor = str(request.get_json().get('color')) 
         newStatus = {'status': updateStatus, 'intensity': updateIntensity, 'color': updateColor}         
         r = requests.post("http://" + LEDaddress + "/LED", json.dumps(newStatus))
         return r.text
